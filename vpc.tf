@@ -31,17 +31,17 @@ data "google_compute_zones" "available" {
 }
 
 resource "google_compute_network" "vpc_network" {
-  name = var.vpc_name
+  name                    = var.vpc_name
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "private_subnets" {
   count = local.num_azs
 
-  name          = "private-${count.index}"
-  ip_cidr_range = local.private_subnets[count.index]
-  region        = data.google_client_config.current.region
-  network       = google_compute_network.vpc_network.id
+  name                     = "private-${count.index}"
+  ip_cidr_range            = local.private_subnets[count.index]
+  region                   = data.google_client_config.current.region
+  network                  = google_compute_network.vpc_network.id
   private_ip_google_access = true
 
 }
@@ -58,9 +58,9 @@ resource "google_compute_subnetwork" "public_subnets" {
 // Create internet routes for public subnets
 
 resource "google_compute_route" "public_inet_routes" {
-  count = length(local.public_subnets)
-  dest_range = "0.0.0.0/0"
-  name = local.public_subnet_names[count.index]
-  network = google_compute_network.vpc_network.id
+  count            = length(local.public_subnets)
+  dest_range       = "0.0.0.0/0"
+  name             = local.public_subnet_names[count.index]
+  network          = google_compute_network.vpc_network.id
   next_hop_gateway = "default-internet-gateway"
 }
