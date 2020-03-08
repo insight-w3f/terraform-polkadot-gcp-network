@@ -15,13 +15,13 @@ For Terraform v0.12.0+
 
 ```
 module "this" {
-    source = "github.com/shinyfoil/terraform-polkadot-gcp-network"
+    source = "github.com/insight-infrastructure/terraform-polkadot-gcp-network"
 
 }
 ```
 ## Examples
 
-- [defaults](https://github.com/shinyfoil/terraform-polkadot-gcp-network/tree/master/examples/defaults)
+- [defaults](https://github.com/insight-infrastructure/terraform-polkadot-gcp-network/tree/master/examples/defaults)
 
 ## Known  Issues
 No issue is creating limit on this module.
@@ -100,7 +100,7 @@ To run them:
 
 ## Authors
 
-Module managed by [Richard Mah](github.com/shinyfoil)
+Module managed by [Richard Mah](https://github.com/shinyfoil)
 
 ## Credits
 
