@@ -1,5 +1,8 @@
 # terraform-polkadot-gcp-network
 
+![open-issues](https://img.shields.io/github/issues-raw/insight-infrastructure/terraform-polkadot-gcp-network?style=for-the-badge)
+![open-pr](https://img.shields.io/github/issues-pr-raw/insight-infrastructure/terraform-polkadot-gcp-network?style=for-the-badge)
+
 ## Features
 
 This module sets up VPCs, DNS zones, and firewall rules for running Polkadot validator nodes on GCP.
