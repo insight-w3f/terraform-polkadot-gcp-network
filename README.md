@@ -63,7 +63,7 @@ No issue is creating limit on this module.
 | stage | The stage of the deployment | `string` | `""` | no |
 | vault\_enabled | Boolean to allow vault related traffic | `bool` | `false` | no |
 | vault\_sg\_name | Name for the vault security group | `string` | `"vault-sg"` | no |
-| vpc\_name | The name of the VPC | `string` | `""` | no |
+| vpc\_name | The name of the VPC | `string` | `"polkadot"` | no |
 | zone\_id | The zone ID to configure as the root zoon - ie subdomain.example.com's zone ID | `string` | `""` | no |
 
 ## Outputs
