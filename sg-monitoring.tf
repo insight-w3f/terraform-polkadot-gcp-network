@@ -22,7 +22,7 @@ resource "google_compute_firewall" "monitoring_sg_http_ingress" {
 resource "google_compute_firewall" "monitoring_sg_ssh" {
   name                    = "${var.monitoring_sg_name}-ssh"
   network                 = google_compute_network.vpc_network.name
-  count                   = var.bastion_enabled ? 0 : 1
+  count                   = var.monitoring_enabled && ! var.bastion_enabled ? 1 : 0
   description             = "${var.monitoring_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
   source_ranges           = var.corporate_ip == "" ? ["0.0.0.0/0"] : ["${var.corporate_ip}/32"]
@@ -38,7 +38,7 @@ resource "google_compute_firewall" "monitoring_sg_ssh" {
 resource "google_compute_firewall" "monitoring_sg_bastion_ssh" {
   name                    = "${var.monitoring_sg_name}-ssh"
   network                 = google_compute_network.vpc_network.name
-  count                   = var.bastion_enabled ? 1 : 0
+  count                   = var.monitoring_enabled && var.bastion_enabled ? 1 : 0
   description             = "${var.bastion_sg_name} SSH access via bastion host"
   direction               = "INGRESS"
   source_service_accounts = [google_service_account.bastion_sg[*].unique_id]

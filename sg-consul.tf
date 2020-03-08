@@ -7,7 +7,7 @@ resource "google_service_account" "consul_sg" {
 resource "google_compute_firewall" "consul_sg_ssh" {
   name          = "${var.consul_sg_name}-ssh"
   network       = google_compute_network.vpc_network.name
-  count         = var.consul_enabled && var.bastion_enabled ? 0 : 1
+  count         = var.consul_enabled && ! var.bastion_enabled ? 1 : 0
   description   = "${var.consul_sg_name} SSH access from corporate IP"
   direction     = "INGRESS"
   source_ranges = var.corporate_ip == "" ? ["0.0.0.0/0"] : ["${var.corporate_ip}/32"]
@@ -22,7 +22,7 @@ resource "google_compute_firewall" "consul_sg_ssh" {
 resource "google_compute_firewall" "consul_sg_bastion_ssh" {
   name                    = "${var.consul_sg_name}-ssh"
   network                 = google_compute_network.vpc_network.name
-  count                   = var.bastion_enabled ? 1 : 0
+  count                   = var.consul_enabled && var.bastion_enabled ? 1 : 0
   description             = "${var.consul_sg_name} SSH access via bastion host"
   direction               = "INGRESS"
   source_service_accounts = [google_service_account.bastion_sg[*].unique_id]
