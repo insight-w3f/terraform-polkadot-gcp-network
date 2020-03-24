@@ -21,8 +21,6 @@ locals {
     local.subnet_bits,
     local.num_azs + subnet_num,
   )]
-
-  public_subnet_names = [for subnet_num in range(local.num_azs) : "public-${subnet_num}"]
 }
 
 data "google_compute_zones" "available" {
@@ -38,7 +36,7 @@ resource "google_compute_network" "vpc_network" {
 resource "google_compute_subnetwork" "private_subnets" {
   count = local.num_azs
 
-  name                     = "private-${count.index}"
+  name                     = "${var.vpc_name}-private-${count.index}"
   ip_cidr_range            = local.private_subnets[count.index]
   region                   = data.google_client_config.current.region
   network                  = google_compute_network.vpc_network.id
@@ -49,7 +47,7 @@ resource "google_compute_subnetwork" "private_subnets" {
 resource "google_compute_subnetwork" "public_subnets" {
   count = local.num_azs
 
-  name          = "public-${count.index}"
+  name          = "${var.vpc_name}-public-${count.index}"
   ip_cidr_range = local.public_subnets[count.index]
   region        = data.google_client_config.current.region
   network       = google_compute_network.vpc_network.id
@@ -60,7 +58,7 @@ resource "google_compute_subnetwork" "public_subnets" {
 resource "google_compute_route" "public_inet_routes" {
   count            = length(local.public_subnets)
   dest_range       = "0.0.0.0/0"
-  name             = local.public_subnet_names[count.index]
+  name             = "${var.vpc_name}-inet-${count.index}"
   network          = google_compute_network.vpc_network.id
   next_hop_gateway = "default-internet-gateway"
 }
