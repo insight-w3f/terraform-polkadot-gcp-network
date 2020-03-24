@@ -1,12 +1,12 @@
 resource "google_service_account" "sentry_node_sg" {
-  account_id  = var.sentry_node_sg_name
+  account_id  = "${var.vpc_name}-${var.sentry_node_sg_name}"
   description = "${var.sentry_node_sg_name} service account"
   // to keep the output consistent, we'll just keep using the count variable and it'll just be true
   count = true ? 1 : 0
 }
 
 resource "google_compute_firewall" "sentry_node_sg_ssh" {
-  name          = "${var.sentry_node_sg_name}-ssh"
+  name          = "${var.vpc_name}-${var.sentry_node_sg_name}-ssh"
   network       = google_compute_network.vpc_network.name
   count         = var.bastion_enabled ? 0 : 1
   description   = "${var.sentry_node_sg_name} SSH access from corporate IP"
@@ -21,7 +21,7 @@ resource "google_compute_firewall" "sentry_node_sg_ssh" {
 }
 
 resource "google_compute_firewall" "sentry_node_sg_bastion_ssh" {
-  name                    = "${var.sentry_node_sg_name}-ssh"
+  name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-ssh"
   network                 = google_compute_network.vpc_network.name
   count                   = var.bastion_enabled ? 1 : 0
   description             = "${var.sentry_node_sg_name} SSH access via bastion host"
@@ -36,7 +36,7 @@ resource "google_compute_firewall" "sentry_node_sg_bastion_ssh" {
 }
 
 resource "google_compute_firewall" "sentry_node_sg_mon" {
-  name                    = "${var.sentry_node_sg_name}-monitoring"
+  name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-monitoring"
   network                 = google_compute_network.vpc_network.name
   count                   = var.monitoring_enabled ? 1 : 0
   description             = "${var.logging_sg_name} node exporter"
@@ -52,7 +52,7 @@ resource "google_compute_firewall" "sentry_node_sg_mon" {
 }
 
 resource "google_compute_firewall" "sentry_node_sg_hids" {
-  name                    = "${var.sentry_node_sg_name}-hids"
+  name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-hids"
   network                 = google_compute_network.vpc_network.name
   count                   = var.hids_enabled ? 1 : 0
   description             = "${var.sentry_node_sg_name} HIDS"
@@ -68,7 +68,7 @@ resource "google_compute_firewall" "sentry_node_sg_hids" {
 }
 
 resource "google_compute_firewall" "sentry_node_sg_consul" {
-  name                    = "${var.sentry_node_sg_name}-consul"
+  name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-consul"
   network                 = google_compute_network.vpc_network.name
   description             = "${var.sentry_node_sg_name} Consul ports"
   count                   = var.consul_enabled ? 1 : 0
@@ -94,7 +94,7 @@ resource "google_compute_firewall" "sentry_node_sg_consul" {
 }
 
 resource "google_compute_firewall" "sentry_node_sg_p2p" {
-  name        = "${var.sentry_node_sg_name}-p2p"
+  name        = "${var.vpc_name}-${var.sentry_node_sg_name}-p2p"
   network     = google_compute_network.vpc_network.name
   description = "${var.sentry_node_sg_name} P2P ports"
   // to keep the output consistent, we'll just keep using the count variable and it'll just be true

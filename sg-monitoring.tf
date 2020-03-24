@@ -1,11 +1,11 @@
 resource "google_service_account" "monitoring_sg" {
-  account_id  = var.monitoring_sg_name
+  account_id  = "${var.vpc_name}-${var.monitoring_sg_name}"
   description = "${var.monitoring_sg_name} service account"
   count       = var.monitoring_enabled ? 1 : 0
 }
 
 resource "google_compute_firewall" "monitoring_sg_http_ingress" {
-  name                    = "${var.monitoring_sg_name}-http-ingress"
+  name                    = "${var.vpc_name}-${var.monitoring_sg_name}-http-ingress"
   network                 = google_compute_network.vpc_network.name
   description             = "${var.monitoring_sg_name} HTTP ingress"
   count                   = var.monitoring_enabled ? 1 : 0
@@ -20,7 +20,7 @@ resource "google_compute_firewall" "monitoring_sg_http_ingress" {
 }
 
 resource "google_compute_firewall" "monitoring_sg_ssh" {
-  name                    = "${var.monitoring_sg_name}-ssh"
+  name                    = "${var.vpc_name}-${var.monitoring_sg_name}-ssh"
   network                 = google_compute_network.vpc_network.name
   count                   = var.monitoring_enabled && ! var.bastion_enabled ? 1 : 0
   description             = "${var.monitoring_sg_name} SSH access from corporate IP"
@@ -36,7 +36,7 @@ resource "google_compute_firewall" "monitoring_sg_ssh" {
 }
 
 resource "google_compute_firewall" "monitoring_sg_bastion_ssh" {
-  name                    = "${var.monitoring_sg_name}-ssh"
+  name                    = "${var.vpc_name}-${var.monitoring_sg_name}-ssh"
   network                 = google_compute_network.vpc_network.name
   count                   = var.monitoring_enabled && var.bastion_enabled ? 1 : 0
   description             = "${var.bastion_sg_name} SSH access via bastion host"
@@ -51,7 +51,7 @@ resource "google_compute_firewall" "monitoring_sg_bastion_ssh" {
 }
 
 resource "google_compute_firewall" "monitoring_sg_consul" {
-  name                    = "${var.monitoring_sg_name}-consul"
+  name                    = "${var.vpc_name}-${var.monitoring_sg_name}-consul"
   network                 = google_compute_network.vpc_network.name
   description             = "${var.monitoring_sg_name} Consul ports"
   count                   = var.monitoring_enabled && var.consul_enabled ? 1 : 0

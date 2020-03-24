@@ -1,11 +1,11 @@
 resource "google_service_account" "bastion_sg" {
-  account_id  = var.bastion_sg_name
+  account_id  = "${var.vpc_name}-${var.bastion_sg_name}"
   description = "${var.bastion_sg_name} service account"
   count       = var.bastion_enabled ? 1 : 0
 }
 
 resource "google_compute_firewall" "bastion_sg_ssh" {
-  name                    = "${var.bastion_sg_name}-ssh"
+  name                    = "${var.vpc_name}-${var.bastion_sg_name}-ssh"
   network                 = google_compute_network.vpc_network.name
   count                   = var.bastion_enabled ? 1 : 0
   description             = "${var.bastion_sg_name} SSH access from corporate IP"
@@ -21,7 +21,7 @@ resource "google_compute_firewall" "bastion_sg_ssh" {
 }
 
 resource "google_compute_firewall" "bastion_sg_mon" {
-  name                    = "${var.bastion_sg_name}-monitoring"
+  name                    = "${var.vpc_name}-${var.bastion_sg_name}-monitoring"
   network                 = google_compute_network.vpc_network.name
   count                   = var.bastion_enabled && var.monitoring_enabled ? 1 : 0
   description             = "${var.bastion_sg_name} node exporter"
