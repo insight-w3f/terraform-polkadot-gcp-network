@@ -20,37 +20,37 @@ output "public_regional_domain" {
 # SGs
 #####
 output "bastion_security_group_id" {
-  value       = google_service_account.bastion_sg[*].unique_id
+  value       = google_service_account.bastion_sg[*].email
   description = "UID of the service account for the bastion host"
 }
 
 output "consul_security_group_id" {
-  value       = google_service_account.consul_sg[*].unique_id
+  value       = google_service_account.consul_sg[*].email
   description = "UID of the service account for the Consul servers"
 }
 
 output "hids_security_group_id" {
-  value       = google_service_account.hids_sg[*].unique_id
+  value       = google_service_account.hids_sg[*].email
   description = "UID of the service account for the HIDS group"
 }
 
 output "logging_security_group_id" {
-  value       = google_service_account.consul_sg[*].unique_id
+  value       = google_service_account.consul_sg[*].email
   description = "UID of the service account for the logging group"
 }
 
 output "monitoring_security_group_id" {
-  value       = google_service_account.monitoring_sg[*].unique_id
+  value       = google_service_account.monitoring_sg[*].email
   description = "UID of the service account for the monitoring group"
 }
 
 output "sentry_security_group_id" {
-  value       = google_service_account.sentry_node_sg[*].unique_id
+  value       = google_service_account.sentry_node_sg[*].email
   description = "UID of the service account for the sentry group"
 }
 
 output "vault_security_group_id" {
-  value       = google_service_account.vault_sg[*].unique_id
+  value       = google_service_account.vault_sg[*].email
   description = "UID of the service account for the vault group"
 }
 

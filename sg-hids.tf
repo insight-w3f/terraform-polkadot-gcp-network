@@ -11,7 +11,7 @@ resource "google_compute_firewall" "hids_sg_ssh" {
   description             = "${var.hids_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
   source_ranges           = var.corporate_ip == "" ? ["0.0.0.0/0"] : ["${var.corporate_ip}/32"]
-  target_service_accounts = [google_service_account.hids_sg[*].unique_id]
+  target_service_accounts = [google_service_account.hids_sg[*].email]
 
   allow {
     ports = [
@@ -26,7 +26,8 @@ resource "google_compute_firewall" "hids_sg_mon_prom" {
   count                   = var.hids_enabled && var.monitoring_enabled ? 1 : 0
   description             = "${var.hids_sg_name} node exporter"
   direction               = "INGRESS"
-  source_service_accounts = [google_service_account.monitoring_sg[*].unique_id]
+  source_service_accounts = [google_service_account.monitoring_sg[*].email]
+  target_service_accounts = [google_service_account.hids_sg[*].email]
 
   allow {
     ports = [
@@ -41,7 +42,8 @@ resource "google_compute_firewall" "hids_sg_mon_nordstrom" {
   count                   = var.hids_enabled && ! var.monitoring_enabled ? 1 : 0
   description             = "${var.hids_sg_name} node exporter"
   direction               = "INGRESS"
-  source_service_accounts = [google_service_account.monitoring_sg[0].unique_id]
+  source_service_accounts = [google_service_account.monitoring_sg[*].email]
+  target_service_accounts = [google_service_account.hids_sg[*].email]
 
   allow {
     ports = [
@@ -56,7 +58,7 @@ resource "google_compute_firewall" "hids_sg_http_ingress" {
   description             = "${var.hids_sg_name} HTTP ingress"
   count                   = var.hids_enabled ? 1 : 0
   direction               = "INGRESS"
-  target_service_accounts = [google_service_account.hids_sg[*].unique_id]
+  target_service_accounts = [google_service_account.hids_sg[*].email]
 
   allow {
     ports = [
@@ -71,7 +73,8 @@ resource "google_compute_firewall" "hids_sg_consul" {
   description             = "${var.hids_sg_name} Consul ports"
   count                   = var.hids_enabled && var.consul_enabled ? 1 : 0
   direction               = "INGRESS"
-  source_service_accounts = [google_service_account.consul_sg[*].unique_id]
+  source_service_accounts = [google_service_account.consul_sg[*].email]
+  target_service_accounts = [google_service_account.hids_sg[*].email]
 
   allow {
     ports = [

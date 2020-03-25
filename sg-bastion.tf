@@ -11,7 +11,7 @@ resource "google_compute_firewall" "bastion_sg_ssh" {
   description             = "${var.bastion_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
   source_ranges           = var.corporate_ip == "" ? ["0.0.0.0/0"] : ["${var.corporate_ip}/32"]
-  target_service_accounts = [google_service_account.bastion_sg[*].unique_id]
+  target_service_accounts = [google_service_account.bastion_sg[*].email]
 
   allow {
     ports = [
@@ -26,7 +26,8 @@ resource "google_compute_firewall" "bastion_sg_mon" {
   count                   = var.bastion_enabled && var.monitoring_enabled ? 1 : 0
   description             = "${var.bastion_sg_name} node exporter"
   direction               = "INGRESS"
-  source_service_accounts = var.monitoring_enabled ? [google_service_account.monitoring_sg[*].unique_id] : []
+  source_service_accounts = var.monitoring_enabled ? [google_service_account.monitoring_sg[*].email] : []
+  target_service_accounts = [google_service_account.bastion_sg[*].email]
 
   allow {
     ports = [
