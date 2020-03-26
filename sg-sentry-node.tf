@@ -12,7 +12,7 @@ resource "google_compute_firewall" "sentry_node_sg_ssh" {
   description             = "${var.sentry_node_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
   source_ranges           = var.corporate_ip == "" ? ["0.0.0.0/0"] : ["${var.corporate_ip}/32"]
-  target_service_accounts = [google_service_account.sentry_node_sg[*].email]
+  target_service_accounts = google_service_account.sentry_node_sg[*].email
 
   allow {
     ports = [
@@ -27,8 +27,8 @@ resource "google_compute_firewall" "sentry_node_sg_bastion_ssh" {
   count                   = var.bastion_enabled ? 1 : 0
   description             = "${var.sentry_node_sg_name} SSH access via bastion host"
   direction               = "INGRESS"
-  source_service_accounts = [google_service_account.bastion_sg[*].email]
-  target_service_accounts = [google_service_account.sentry_node_sg[*].email]
+  source_service_accounts = google_service_account.bastion_sg[*].email
+  target_service_accounts = google_service_account.sentry_node_sg[*].email
 
   allow {
     ports = [
@@ -43,8 +43,8 @@ resource "google_compute_firewall" "sentry_node_sg_mon" {
   count                   = var.monitoring_enabled ? 1 : 0
   description             = "${var.logging_sg_name} node exporter"
   direction               = "INGRESS"
-  source_service_accounts = [google_service_account.monitoring_sg[*].email]
-  target_service_accounts = [google_service_account.sentry_node_sg[*].email]
+  source_service_accounts = google_service_account.monitoring_sg[*].email
+  target_service_accounts = google_service_account.sentry_node_sg[*].email
 
   allow {
     ports = [
@@ -60,8 +60,8 @@ resource "google_compute_firewall" "sentry_node_sg_hids" {
   count                   = var.hids_enabled ? 1 : 0
   description             = "${var.sentry_node_sg_name} HIDS"
   direction               = "INGRESS"
-  source_service_accounts = [google_service_account.monitoring_sg[*].email]
-  target_service_accounts = [google_service_account.sentry_node_sg[*].email]
+  source_service_accounts = google_service_account.monitoring_sg[*].email
+  target_service_accounts = google_service_account.sentry_node_sg[*].email
 
   allow {
     ports = [
@@ -77,8 +77,8 @@ resource "google_compute_firewall" "sentry_node_sg_consul" {
   description             = "${var.sentry_node_sg_name} Consul ports"
   count                   = var.consul_enabled ? 1 : 0
   direction               = "INGRESS"
-  source_service_accounts = [google_service_account.consul_sg[*].email]
-  target_service_accounts = [google_service_account.sentry_node_sg[*].email]
+  source_service_accounts = google_service_account.consul_sg[*].email
+  target_service_accounts = google_service_account.sentry_node_sg[*].email
 
   allow {
     ports = [
@@ -105,7 +105,8 @@ resource "google_compute_firewall" "sentry_node_sg_p2p" {
   // to keep the output consistent, we'll just keep using the count variable and it'll just be true
   count                   = true ? 1 : 0
   direction               = "INGRESS"
-  target_service_accounts = [google_service_account.sentry_node_sg[*].email]
+  source_ranges           = ["0.0.0.0/0"]
+  target_service_accounts = google_service_account.sentry_node_sg[*].email
 
   allow {
     ports = [
@@ -127,7 +128,8 @@ resource "google_compute_firewall" "sentry_node_sg_api" {
   // to keep the output consistent, we'll just keep using the count variable and it'll just be true
   count                   = true ? 1 : 0
   direction               = "INGRESS"
-  target_service_accounts = [google_service_account.sentry_node_sg[*].email]
+  source_ranges           = ["0.0.0.0/0"]
+  target_service_accounts = google_service_account.sentry_node_sg[*].email
 
   allow {
     ports = [

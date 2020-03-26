@@ -10,7 +10,8 @@ resource "google_compute_firewall" "monitoring_sg_http_ingress" {
   description             = "${var.monitoring_sg_name} HTTP ingress"
   count                   = var.monitoring_enabled ? 1 : 0
   direction               = "INGRESS"
-  target_service_accounts = [google_service_account.monitoring_sg[*].email]
+  source_ranges           = ["0.0.0.0/0"]
+  target_service_accounts = google_service_account.monitoring_sg[*].email
 
   allow {
     ports = [
@@ -26,7 +27,7 @@ resource "google_compute_firewall" "monitoring_sg_ssh" {
   description             = "${var.monitoring_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
   source_ranges           = var.corporate_ip == "" ? ["0.0.0.0/0"] : ["${var.corporate_ip}/32"]
-  target_service_accounts = [google_service_account.monitoring_sg[*].email]
+  target_service_accounts = google_service_account.monitoring_sg[*].email
 
   allow {
     ports = [
@@ -41,8 +42,8 @@ resource "google_compute_firewall" "monitoring_sg_bastion_ssh" {
   count                   = var.monitoring_enabled && var.bastion_enabled ? 1 : 0
   description             = "${var.bastion_sg_name} SSH access via bastion host"
   direction               = "INGRESS"
-  source_service_accounts = [google_service_account.bastion_sg[*].email]
-  target_service_accounts = [google_service_account.monitoring_sg[*].email]
+  source_service_accounts = google_service_account.bastion_sg[*].email
+  target_service_accounts = google_service_account.monitoring_sg[*].email
 
   allow {
     ports = [
@@ -57,8 +58,8 @@ resource "google_compute_firewall" "monitoring_sg_consul" {
   description             = "${var.monitoring_sg_name} Consul ports"
   count                   = var.monitoring_enabled && var.consul_enabled ? 1 : 0
   direction               = "INGRESS"
-  source_service_accounts = [google_service_account.consul_sg[*].email]
-  target_service_accounts = [google_service_account.monitoring_sg[*].email]
+  source_service_accounts = google_service_account.consul_sg[*].email
+  target_service_accounts = google_service_account.monitoring_sg[*].email
 
   allow {
     ports = [
