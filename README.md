@@ -2,7 +2,7 @@
 
 ![open-issues](https://img.shields.io/github/issues-raw/insight-w3f/terraform-polkadot-gcp-network?style=for-the-badge)
 ![open-pr](https://img.shields.io/github/issues-pr-raw/insight-w3f/terraform-polkadot-gcp-network?style=for-the-badge)
-![build-status](https://img.shields.io/circleci/build/github/insight-w3f/terraform-polkadot-gcp-network?style=for-the-badge&token=442d1258f4e0283e10d797aba5025c7a36edbb98)
+[![build-status](https://img.shields.io/circleci/build/github/insight-w3f/terraform-polkadot-gcp-network?style=for-the-badge)](https://circleci.com/gh/insight-w3f/terraform-polkadot-gcp-network)
 
 ## Features
 
