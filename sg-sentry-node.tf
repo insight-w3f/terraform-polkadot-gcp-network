@@ -7,7 +7,7 @@ resource "google_service_account" "sentry_node_sg" {
 
 resource "google_compute_firewall" "sentry_node_sg_ssh" {
   name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-ssh"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.bastion_enabled ? 0 : 1
   description             = "${var.sentry_node_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
@@ -23,7 +23,7 @@ resource "google_compute_firewall" "sentry_node_sg_ssh" {
 
 resource "google_compute_firewall" "sentry_node_sg_bastion_ssh" {
   name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-ssh"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.bastion_enabled ? 1 : 0
   description             = "${var.sentry_node_sg_name} SSH access via bastion host"
   direction               = "INGRESS"
@@ -39,7 +39,7 @@ resource "google_compute_firewall" "sentry_node_sg_bastion_ssh" {
 
 resource "google_compute_firewall" "sentry_node_sg_mon" {
   name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-monitoring"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.monitoring_enabled ? 1 : 0
   description             = "${var.logging_sg_name} node exporter"
   direction               = "INGRESS"
@@ -56,7 +56,7 @@ resource "google_compute_firewall" "sentry_node_sg_mon" {
 
 resource "google_compute_firewall" "sentry_node_sg_hids" {
   name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-hids"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.hids_enabled ? 1 : 0
   description             = "${var.sentry_node_sg_name} HIDS"
   direction               = "INGRESS"
@@ -73,7 +73,7 @@ resource "google_compute_firewall" "sentry_node_sg_hids" {
 
 resource "google_compute_firewall" "sentry_node_sg_consul" {
   name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-consul"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   description             = "${var.sentry_node_sg_name} Consul ports"
   count                   = var.consul_enabled ? 1 : 0
   direction               = "INGRESS"
@@ -100,7 +100,7 @@ resource "google_compute_firewall" "sentry_node_sg_consul" {
 
 resource "google_compute_firewall" "sentry_node_sg_p2p" {
   name        = "${var.vpc_name}-${var.sentry_node_sg_name}-p2p"
-  network     = google_compute_network.vpc_network.name
+  network     = module.vpc.network_name
   description = "${var.sentry_node_sg_name} P2P ports"
   // to keep the output consistent, we'll just keep using the count variable and it'll just be true
   count                   = true ? 1 : 0
@@ -123,7 +123,7 @@ resource "google_compute_firewall" "sentry_node_sg_p2p" {
 
 resource "google_compute_firewall" "sentry_node_sg_api" {
   name        = "${var.vpc_name}-${var.sentry_node_sg_name}-api"
-  network     = google_compute_network.vpc_network.name
+  network     = module.vpc.network_name
   description = "${var.sentry_node_sg_name} API ports"
   // to keep the output consistent, we'll just keep using the count variable and it'll just be true
   count                   = true ? 1 : 0

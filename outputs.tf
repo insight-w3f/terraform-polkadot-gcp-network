@@ -58,27 +58,27 @@ output "vault_security_group_id" {
 # VPC
 #####
 output "vpc_id" {
-  value       = google_compute_network.vpc_network.id
+  value       = module.vpc.network_self_link
   description = "The ID of the VPC"
 }
 
 output "public_subnets" {
-  value       = google_compute_subnetwork.public_subnets[*].id
+  value       = slice(module.vpc.subnets_self_links, 0, length(module.vpc.subnets_self_links) / 2)
   description = "The IDs of the public subnets"
 }
 
 output "private_subnets" {
-  value       = google_compute_subnetwork.private_subnets[*].id
+  value       = slice(module.vpc.subnets_self_links, (length(module.vpc.subnets_self_links) / 2) + 1, length(module.vpc.subnets_self_links))
   description = "The IDs of the private subnets"
 }
 
 output "public_subnet_cidr_blocks" {
-  value       = google_compute_subnetwork.public_subnets[*].ip_cidr_range
+  value       = local.public_subnets_ranges
   description = "CIDR ranges for the public subnets"
 }
 
 output "private_subnets_cidr_blocks" {
-  value       = google_compute_subnetwork.private_subnets[*].ip_cidr_range
+  value       = local.private_subnets_ranges
   description = "CIDR ranges for the private subnets"
 }
 

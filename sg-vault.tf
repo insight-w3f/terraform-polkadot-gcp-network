@@ -6,7 +6,7 @@ resource "google_service_account" "vault_sg" {
 
 resource "google_compute_firewall" "vault_sg_various" {
   name                    = "${var.vpc_name}-${var.vault_sg_name}-various"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.vault_enabled ? 1 : 0
   description             = "${var.vault_sg_name} various ports"
   direction               = "INGRESS"
@@ -23,7 +23,7 @@ resource "google_compute_firewall" "vault_sg_various" {
 
 resource "google_compute_firewall" "vault_sg_ssh" {
   name                    = "${var.vpc_name}-${var.vault_sg_name}-ssh"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.vault_enabled && ! var.bastion_enabled ? 1 : 0
   description             = "${var.vault_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
@@ -39,7 +39,7 @@ resource "google_compute_firewall" "vault_sg_ssh" {
 
 resource "google_compute_firewall" "vault_sg_bastion_ssh" {
   name                    = "${var.vpc_name}-${var.vault_sg_name}-ssh"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.vault_enabled && var.bastion_enabled ? 1 : 0
   description             = "${var.vault_sg_name} SSH access via bastion host"
   direction               = "INGRESS"
@@ -55,7 +55,7 @@ resource "google_compute_firewall" "vault_sg_bastion_ssh" {
 
 resource "google_compute_firewall" "vault_sg_mon" {
   name                    = "${var.vpc_name}-${var.vault_sg_name}-monitoring"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.vault_enabled && var.monitoring_enabled ? 1 : 0
   description             = "${var.logging_sg_name} node exporter"
   direction               = "INGRESS"
@@ -72,7 +72,7 @@ resource "google_compute_firewall" "vault_sg_mon" {
 
 resource "google_compute_firewall" "vault_sg_consul" {
   name                    = "${var.vpc_name}-${var.vault_sg_name}-consul"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   description             = "${var.vault_sg_name} Consul ports"
   count                   = var.vault_enabled && var.consul_enabled ? 1 : 0
   direction               = "INGRESS"

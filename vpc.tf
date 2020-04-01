@@ -11,16 +11,26 @@ locals {
 
   subnet_bits = ceil(log(local.subnet_count, 2))
 
-  public_subnets = [for subnet_num in range(local.num_azs) : cidrsubnet(
+  public_subnets_ranges = [for subnet_num in range(local.num_azs) : cidrsubnet(
     var.cidr,
     local.subnet_bits,
   subnet_num)]
 
-  private_subnets = [for subnet_num in range(local.num_azs) : cidrsubnet(
+  private_subnets_ranges = [for subnet_num in range(local.num_azs) : cidrsubnet(
     var.cidr,
     local.subnet_bits,
     local.num_azs + subnet_num,
   )]
+
+  public_subnets_names  = [for subnet_num in range(local.num_azs) : "${var.vpc_name}-public-${subnet_num}"]
+  private_subnets_names = [for subnet_num in range(local.num_azs) : "${var.vpc_name}-private-${subnet_num}"]
+
+  public_google_access  = [for subnet_num in range(local.num_azs) : "false"]
+  private_google_access = [for subnet_num in range(local.num_azs) : "true"]
+
+  subnet_ranges        = concat(local.public_subnets_ranges, local.private_subnets_ranges)
+  subnet_names         = concat(local.public_subnets_names, local.private_subnets_names)
+  subnet_google_access = concat(local.public_google_access, local.private_google_access)
 }
 
 data "google_compute_zones" "available" {
@@ -28,37 +38,19 @@ data "google_compute_zones" "available" {
   status = "UP"
 }
 
-resource "google_compute_network" "vpc_network" {
-  name                    = var.vpc_name
-  auto_create_subnetworks = false
-}
+module "vpc" {
+  source  = "terraform-google-modules/network/google"
+  version = "~> 2.0.0"
 
-resource "google_compute_subnetwork" "private_subnets" {
-  count = local.num_azs
+  project_id   = var.project
+  network_name = var.vpc_name
 
-  name                     = "${var.vpc_name}-private-${count.index}"
-  ip_cidr_range            = local.private_subnets[count.index]
-  region                   = data.google_client_config.current.region
-  network                  = google_compute_network.vpc_network.id
-  private_ip_google_access = true
+  shared_vpc_host = false
 
-}
-
-resource "google_compute_subnetwork" "public_subnets" {
-  count = local.num_azs
-
-  name          = "${var.vpc_name}-public-${count.index}"
-  ip_cidr_range = local.public_subnets[count.index]
-  region        = data.google_client_config.current.region
-  network       = google_compute_network.vpc_network.id
-}
-
-// Create internet routes for public subnets
-
-resource "google_compute_route" "public_inet_routes" {
-  count            = length(local.public_subnets)
-  dest_range       = "0.0.0.0/0"
-  name             = "${var.vpc_name}-inet-${count.index}"
-  network          = google_compute_network.vpc_network.id
-  next_hop_gateway = "default-internet-gateway"
+  subnets = [for subnet in range(length(local.subnet_names)) :
+    {
+      subnet_name   = local.subnet_names[subnet]
+      subnet_ip     = local.subnet_ranges[subnet]
+      subnet_region = var.region
+  }]
 }

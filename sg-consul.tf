@@ -6,7 +6,7 @@ resource "google_service_account" "consul_sg" {
 
 resource "google_compute_firewall" "consul_sg_ssh" {
   name                    = "${var.vpc_name}-${var.consul_sg_name}-ssh"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.consul_enabled && ! var.bastion_enabled ? 1 : 0
   description             = "${var.consul_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
@@ -22,7 +22,7 @@ resource "google_compute_firewall" "consul_sg_ssh" {
 
 resource "google_compute_firewall" "consul_sg_bastion_ssh" {
   name                    = "${var.vpc_name}-${var.consul_sg_name}-ssh"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.consul_enabled && var.bastion_enabled ? 1 : 0
   description             = "${var.consul_sg_name} SSH access via bastion host"
   direction               = "INGRESS"
@@ -38,7 +38,7 @@ resource "google_compute_firewall" "consul_sg_bastion_ssh" {
 
 resource "google_compute_firewall" "consul_sg_mon_prom" {
   name                    = "${var.vpc_name}-${var.consul_sg_name}-monitoring"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.consul_enabled && var.monitoring_enabled ? 1 : 0
   description             = "${var.consul_sg_name} node exporter"
   direction               = "INGRESS"
@@ -54,7 +54,7 @@ resource "google_compute_firewall" "consul_sg_mon_prom" {
 
 resource "google_compute_firewall" "consul_sg_mon_nordstrom" {
   name                    = "${var.vpc_name}-${var.consul_sg_name}-monitoring"
-  network                 = google_compute_network.vpc_network.name
+  network                 = module.vpc.network_name
   count                   = var.consul_enabled && ! var.monitoring_enabled ? 1 : 0
   description             = "${var.consul_sg_name} node exporter"
   direction               = "INGRESS"

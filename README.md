@@ -27,6 +27,12 @@ module "this" {
 No issue is creating limit on this module.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
+
 ## Providers
 
 | Name | Version |
@@ -36,7 +42,7 @@ No issue is creating limit on this module.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | azs | List of availability zones | `list(string)` | `[]` | no |
 | bastion\_enabled | Boolean to enable a bastion host.  All ssh traffic restricted to bastion | `bool` | `false` | no |
 | bastion\_sg\_name | Name for the bastion security group | `string` | `"bastion-sg"` | no |
@@ -58,6 +64,8 @@ No issue is creating limit on this module.
 | network\_name | The network name, ie kusama / mainnet | `string` | `""` | no |
 | num\_azs | The number of AZs to deploy into | `number` | `0` | no |
 | owner | n/a | `string` | `""` | no |
+| project | The GCP project name | `string` | n/a | yes |
+| region | The GCP region | `string` | n/a | yes |
 | root\_domain\_name | The public domain | `string` | `""` | no |
 | sentry\_node\_sg\_name | Name for the public node security group | `string` | `"sentry-sg"` | no |
 | stage | The stage of the deployment | `string` | `""` | no |

@@ -31,6 +31,20 @@ variable "owner" {
 }
 
 ######
+# GCP
+######
+
+variable "project" {
+  description = "The GCP project name"
+  type        = string
+}
+
+variable "region" {
+  description = "The GCP region"
+  type        = string
+}
+
+######
 # DNS
 ######
 variable "internal_tld" {
