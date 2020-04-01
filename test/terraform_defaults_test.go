@@ -30,7 +30,7 @@ func TestTerraformDefaults(t *testing.T) {
 		Vars: map[string]interface{}{
 			"gcp_project": projectID,
 			"gcp_region": region,
-			"vpc_id": "cci-test",
+			"vpc_name": "cci-test",
 		},
 	}
 
