@@ -87,13 +87,14 @@ No issue is creating limit on this module.
 | monitoring\_security\_group\_id | UID of the service account for the monitoring group |
 | private\_subnets | The IDs of the private subnets |
 | private\_subnets\_cidr\_blocks | CIDR ranges for the private subnets |
+| private\_vpc\_id | The ID of the private VPC |
 | public\_regional\_domain | The public regional domain |
 | public\_subnet\_cidr\_blocks | CIDR ranges for the public subnets |
 | public\_subnets | The IDs of the public subnets |
+| public\_vpc\_id | The ID of the public VPC |
 | root\_domain\_name | The name of the root domain |
 | sentry\_security\_group\_id | UID of the service account for the sentry group |
 | vault\_security\_group\_id | UID of the service account for the vault group |
-| vpc\_id | The ID of the VPC |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

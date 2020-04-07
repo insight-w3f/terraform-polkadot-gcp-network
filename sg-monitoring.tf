@@ -6,7 +6,7 @@ resource "google_service_account" "monitoring_sg" {
 
 resource "google_compute_firewall" "monitoring_sg_http_ingress" {
   name                    = "${var.vpc_name}-${var.monitoring_sg_name}-http-ingress"
-  network                 = module.vpc.network_name
+  network                 = module.public-vpc.network_name
   description             = "${var.monitoring_sg_name} HTTP ingress"
   count                   = var.monitoring_enabled ? 1 : 0
   direction               = "INGRESS"
@@ -22,7 +22,7 @@ resource "google_compute_firewall" "monitoring_sg_http_ingress" {
 
 resource "google_compute_firewall" "monitoring_sg_ssh" {
   name                    = "${var.vpc_name}-${var.monitoring_sg_name}-ssh"
-  network                 = module.vpc.network_name
+  network                 = module.public-vpc.network_name
   count                   = var.monitoring_enabled && ! var.bastion_enabled ? 1 : 0
   description             = "${var.monitoring_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
@@ -38,7 +38,7 @@ resource "google_compute_firewall" "monitoring_sg_ssh" {
 
 resource "google_compute_firewall" "monitoring_sg_bastion_ssh" {
   name                    = "${var.vpc_name}-${var.monitoring_sg_name}-ssh"
-  network                 = module.vpc.network_name
+  network                 = module.private-vpc.network_name
   count                   = var.monitoring_enabled && var.bastion_enabled ? 1 : 0
   description             = "${var.bastion_sg_name} SSH access via bastion host"
   direction               = "INGRESS"
@@ -54,7 +54,7 @@ resource "google_compute_firewall" "monitoring_sg_bastion_ssh" {
 
 resource "google_compute_firewall" "monitoring_sg_consul" {
   name                    = "${var.vpc_name}-${var.monitoring_sg_name}-consul"
-  network                 = module.vpc.network_name
+  network                 = module.private-vpc.network_name
   description             = "${var.monitoring_sg_name} Consul ports"
   count                   = var.monitoring_enabled && var.consul_enabled ? 1 : 0
   direction               = "INGRESS"

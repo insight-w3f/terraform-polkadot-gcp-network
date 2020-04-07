@@ -57,18 +57,24 @@ output "vault_security_group_id" {
 #####
 # VPC
 #####
-output "vpc_id" {
-  value       = module.vpc.network_self_link
-  description = "The ID of the VPC"
+output "public_vpc_id" {
+  value       = module.public-vpc.network_self_link
+  description = "The ID of the public VPC"
 }
 
+output "private_vpc_id" {
+  value       = module.private-vpc.network_self_link
+  description = "The ID of the private VPC"
+}
+
+
 output "public_subnets" {
-  value       = slice(module.vpc.subnets_self_links, 0, length(module.vpc.subnets_self_links) / 2)
+  value       = module.public-vpc.subnets_self_links
   description = "The IDs of the public subnets"
 }
 
 output "private_subnets" {
-  value       = slice(module.vpc.subnets_self_links, (length(module.vpc.subnets_self_links) / 2) + 1, length(module.vpc.subnets_self_links))
+  value       = module.private-vpc.subnets_self_links
   description = "The IDs of the private subnets"
 }
 
