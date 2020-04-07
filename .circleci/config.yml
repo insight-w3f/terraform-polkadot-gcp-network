@@ -2,10 +2,6 @@ jobs:
   test:
     executor: go/default
     steps:
-      - run:
-          command: |
-            echo ${GOOGLE_CREDENTIALS} > ${HOME}/gcp-key.json
-            export GCLOUD-SERVICE-KEY=${HOME}/gcp-key.json
       - checkout
       - go/load-cache
       - go/mod-download
@@ -19,13 +15,6 @@ jobs:
             sudo unzip terraform_0.12.20_linux_amd64.zip -d /usr/local/bin
           name: Install Terraform
       - go/test
-      - run:
-          name: Destroy on failure
-          command: |
-            wget https://github.com/gruntwork-io/cloud-nuke/releases/download/v0.1.13/cloud-nuke_linux_amd64 -O ./cloud-nuke
-            chmod +x ./cloud-nuke
-            ./cloud-nuke aws --force
-          when: on_fail
 orbs:
   go: circleci/go@0.2.0
   node: circleci/node@1.1.6
@@ -37,6 +26,7 @@ workflows:
       - gcp-cli/install_and_initialize_cli:
           context: gcp-ci-1
           executor: gcp-cli/default
+          gcloud-service-key: $GOOGLE_CREDENTIALS
   default:
     jobs:
       - test:
