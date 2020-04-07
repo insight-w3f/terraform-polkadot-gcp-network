@@ -8,6 +8,37 @@ jobs:
       - go/save-cache
       - run:
           command: |
+            install () {
+              # Set sudo to work whether logged in as root user or non-root user
+              if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+              cd ~/
+              curl -s https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-287.0.0-linux-x86_64.tar.gz | tar xz
+              echo 'source ~/google-cloud-sdk/path.bash.inc' >> $BASH_ENV
+            }
+
+            if grep 'docker\|lxc' /proc/1/cgroup > /dev/null 2>&1; then
+              if [[ $(command -v gcloud) == "" ]]; then
+                install
+              else
+                echo "gcloud CLI is already installed."
+              fi
+            else
+              echo "----------------------------------------------------------------------------------------------------"
+              echo "this is a machine executor job, replacing default installation of gcloud CLI"
+              echo "----------------------------------------------------------------------------------------------------"
+              sudo rm -rf /opt/google-cloud-sdk
+              install
+            fi
+          name: Install latest gcloud CLI version, if not available
+      - run:
+          command: |
+            echo ${GOOGLE_CREDENTIALS} > ${HOME}/gcp-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcp-key.json
+            gcloud --quiet config set project $GOOGLE_PROJECT
+            gcloud --quiet config set compute/region $GOOGLE_REGION
+          name: Initialize gcloud CLI to connect to Google Cloud
+      - run:
+          command: |
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
             python get-pip.py
             pip install ansible
@@ -18,17 +49,8 @@ jobs:
 orbs:
   go: circleci/go@0.2.0
   node: circleci/node@1.1.6
-  gcp-cli: circleci/gcp-cli@1.8.4
 version: 2.1
 workflows:
-  install_and_configure_cli:
-    jobs:
-      - gcp-cli/install_and_initialize_cli:
-          context: gcp-ci-1
-          executor: gcp-cli/default
-          gcloud-service-key: GOOGLE_CREDENTIALS
-          google-project-id: GOOGLE_PROJECT
-          google-compute-zone: GOOGLE_REGION
   default:
     jobs:
       - test:
