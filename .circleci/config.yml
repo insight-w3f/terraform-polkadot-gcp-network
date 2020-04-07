@@ -3,7 +3,9 @@ jobs:
     executor: go/default
     steps:
       - run:
-          command: echo ${GOOGLE_CREDENTIALS} > ${HOME}/gcp-key.json
+          command: |
+            echo ${GOOGLE_CREDENTIALS} > ${HOME}/gcp-key.json
+            export GCLOUD-SERVICE-KEY=${HOME}/gcp-key.json
       - checkout
       - go/load-cache
       - go/mod-download
