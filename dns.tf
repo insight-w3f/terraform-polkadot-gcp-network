@@ -1,5 +1,5 @@
 locals {
-  vpc_ids       = module.vpc.network_self_link
+  vpc_ids       = [module.public-vpc.network_self_link, module.private-vpc.network_self_link]
   public_domain = join(".", [data.google_client_config.current.region, var.environment, var.root_domain_name])
 }
 

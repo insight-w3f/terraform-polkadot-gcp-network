@@ -6,7 +6,7 @@ resource "google_service_account" "logging_sg" {
 
 resource "google_compute_firewall" "logging_sg_ssh" {
   name                    = "${var.vpc_name}-${var.logging_sg_name}-ssh"
-  network                 = module.vpc.network_name
+  network                 = module.public-vpc.network_name
   count                   = var.logging_enabled && ! var.bastion_enabled ? 1 : 0
   description             = "${var.logging_sg_name} SSH access from corporate IP"
   direction               = "INGRESS"
@@ -22,7 +22,7 @@ resource "google_compute_firewall" "logging_sg_ssh" {
 
 resource "google_compute_firewall" "logging_sg_bastion_ssh" {
   name                    = "${var.vpc_name}-${var.logging_sg_name}-ssh"
-  network                 = module.vpc.network_name
+  network                 = module.private-vpc.network_name
   count                   = var.logging_enabled && var.bastion_enabled ? 1 : 0
   description             = "${var.logging_sg_name} SSH access via bastion host"
   direction               = "INGRESS"
@@ -38,7 +38,7 @@ resource "google_compute_firewall" "logging_sg_bastion_ssh" {
 
 resource "google_compute_firewall" "logging_sg_mon_prom" {
   name                    = "${var.vpc_name}-${var.logging_sg_name}-monitoring"
-  network                 = module.vpc.network_name
+  network                 = module.private-vpc.network_name
   count                   = var.logging_enabled && var.monitoring_enabled ? 1 : 0
   description             = "${var.logging_sg_name} node exporter"
   direction               = "INGRESS"
@@ -54,7 +54,7 @@ resource "google_compute_firewall" "logging_sg_mon_prom" {
 
 resource "google_compute_firewall" "logging_sg_mon_nordstrom" {
   name                    = "${var.vpc_name}-${var.logging_sg_name}-monitoring"
-  network                 = module.vpc.network_name
+  network                 = module.private-vpc.network_name
   count                   = var.logging_enabled && ! var.monitoring_enabled ? 1 : 0
   description             = "${var.logging_sg_name} node exporter"
   direction               = "INGRESS"
@@ -70,7 +70,7 @@ resource "google_compute_firewall" "logging_sg_mon_nordstrom" {
 
 resource "google_compute_firewall" "logging_sg_http_ingress" {
   name                    = "${var.vpc_name}-${var.logging_sg_name}-http_ingress"
-  network                 = module.vpc.network_name
+  network                 = module.public-vpc.network_name
   description             = "${var.logging_sg_name} HTTP ingress"
   count                   = var.logging_enabled ? 1 : 0
   direction               = "INGRESS"
@@ -86,7 +86,7 @@ resource "google_compute_firewall" "logging_sg_http_ingress" {
 
 resource "google_compute_firewall" "logging_sg_consul" {
   name                    = "${var.vpc_name}-${var.logging_sg_name}-consul"
-  network                 = module.vpc.network_name
+  network                 = module.private-vpc.network_name
   description             = "${var.logging_sg_name} Consul ports"
   count                   = var.logging_enabled && var.consul_enabled ? 1 : 0
   direction               = "INGRESS"
