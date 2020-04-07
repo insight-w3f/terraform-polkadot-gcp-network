@@ -2,6 +2,8 @@ jobs:
   test:
     executor: go/default
     steps:
+      - run:
+          command: echo ${GOOGLE_CREDENTIALS} > ${HOME}/gcp-key.json
       - checkout
       - go/load-cache
       - go/mod-download
@@ -25,8 +27,15 @@ jobs:
 orbs:
   go: circleci/go@0.2.0
   node: circleci/node@1.1.6
+  gcp-cli: circleci/gcp-cli@1.8.4
 version: 2.1
 workflows:
+  install_and_configure_cli:
+    jobs:
+      - gcp-cli/install_and_initialize_cli:
+          context: gcp-ci-1
+          executor: gcp-cli/default
+          gcloud-service-key: ${HOME}/gcp-key.json
   default:
     jobs:
       - test:
