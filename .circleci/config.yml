@@ -26,7 +26,7 @@ workflows:
       - gcp-cli/install_and_initialize_cli:
           context: gcp-ci-1
           executor: gcp-cli/default
-          gcloud-service-key: $GOOGLE_CREDENTIALS
+          gcloud-service-key: GOOGLE_CREDENTIALS
   default:
     jobs:
       - test:
