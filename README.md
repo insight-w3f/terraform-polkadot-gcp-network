@@ -37,6 +37,7 @@ No issue is creating limit on this module.
 
 | Name | Version |
 |------|---------|
+| cloudflare | n/a |
 | google | n/a |
 
 ## Inputs
