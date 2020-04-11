@@ -62,20 +62,39 @@ output "public_vpc_id" {
   description = "The ID of the public VPC"
 }
 
+output "public_vpc_name" {
+  value       = module.public-vpc.network_name
+  description = "The name of the public VPC"
+}
+
 output "private_vpc_id" {
   value       = module.private-vpc.network_self_link
   description = "The ID of the private VPC"
 }
 
+output "private_vpc_name" {
+  value       = module.private-vpc.network_name
+  description = "The name of the private VPC"
+}
 
 output "public_subnets" {
   value       = module.public-vpc.subnets_self_links
   description = "The IDs of the public subnets"
 }
 
+output "public_subnets_names" {
+  value       = module.public-vpc.subnets_names
+  description = "The names of the public subnets"
+}
+
 output "private_subnets" {
   value       = module.private-vpc.subnets_self_links
   description = "The IDs of the private subnets"
+}
+
+output "private_subnets_names" {
+  value       = module.private-vpc.subnets_names
+  description = "The names of the public subnets"
 }
 
 output "public_subnet_cidr_blocks" {
