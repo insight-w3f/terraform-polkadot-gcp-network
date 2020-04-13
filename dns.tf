@@ -1,6 +1,6 @@
 locals {
   vpc_ids       = [module.public-vpc.network_self_link, module.private-vpc.network_self_link]
-  public_domain = join(".", [data.google_client_config.current.region, var.environment, "gcp", var.network_name, var.root_domain_name])
+  public_domain = join(".", [data.google_client_config.current.region, "gcp.polkadot", var.root_domain_name])
 }
 
 data cloudflare_zones "this" {
@@ -11,7 +11,7 @@ data cloudflare_zones "this" {
 
 resource "cloudflare_record" "public_delegation" {
   count   = var.root_domain_name == "" ? 0 : 4
-  name    = "gcp.${var.network_name}.${var.root_domain_name}."
+  name    = "gcp.polkadot.${var.root_domain_name}."
   value   = google_dns_managed_zone.this[0].name_servers[count.index]
   type    = "NS"
   zone_id = data.cloudflare_zones.this.zones[0].id
