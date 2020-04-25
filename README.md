@@ -84,6 +84,7 @@ No issue is creating limit on this module.
 | consul\_security\_group\_id | UID of the service account for the Consul servers |
 | hids\_security\_group\_id | UID of the service account for the HIDS group |
 | internal\_tld | The name of the internal domain |
+| kubernetes\_subnet | n/a |
 | logging\_security\_group\_id | UID of the service account for the logging group |
 | monitoring\_security\_group\_id | UID of the service account for the monitoring group |
 | private\_subnets | The IDs of the private subnets |

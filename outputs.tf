@@ -111,3 +111,7 @@ output "azs" {
   value       = local.azs
   description = "Availability zones"
 }
+
+output "kubernetes_subnet" {
+  value = module.subnet.subnets
+}
