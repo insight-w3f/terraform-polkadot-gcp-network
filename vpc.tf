@@ -39,12 +39,32 @@ module "public-vpc" {
   network_name    = "${var.vpc_name}-public"
   shared_vpc_host = false
 
-  subnets = [for subnet in range(length(local.public_subnets_names)) :
+  subnets = concat([
     {
-      subnet_name   = local.public_subnets_names[subnet]
-      subnet_ip     = local.public_subnets_ranges[subnet]
+      subnet_name   = "eks"
+      subnet_ip     = "172.16.0.0/14"
       subnet_region = var.region
-  }]
+    },
+    ],
+    [for subnet in range(length(local.public_subnets_names)) :
+      {
+        subnet_name   = local.public_subnets_names[subnet]
+        subnet_ip     = local.public_subnets_ranges[subnet]
+        subnet_region = var.region
+  }])
+
+  secondary_ranges = {
+    eks = [
+      {
+        range_name    = "eks-pods"
+        ip_cidr_range = "172.20.0.0/14"
+      },
+      {
+        range_name    = "eks-svcs"
+        ip_cidr_range = "172.24.0.0/14"
+      },
+    ]
+  }
 }
 
 module "private-vpc" {
@@ -64,30 +84,4 @@ module "private-vpc" {
       subnet_region         = var.region
       subnet_private_access = true
   }]
-}
-
-module "subnet" {
-  source       = "terraform-google-modules/network/google//modules/subnets"
-  network_name = module.public-vpc.network_name
-  project_id   = var.project
-  subnets = [
-    {
-      subnet_name   = "eks"
-      subnet_ip     = "172.16.0.0/14"
-      subnet_region = var.region
-    },
-  ]
-
-  secondary_ranges = {
-    eks = [
-      {
-        range_name    = "eks-pods"
-        ip_cidr_range = "172.20.0.0/14"
-      },
-      {
-        range_name    = "eks-svcs"
-        ip_cidr_range = "172.24.0.0/14"
-      },
-    ]
-  }
 }

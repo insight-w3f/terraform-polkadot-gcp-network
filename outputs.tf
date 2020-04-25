@@ -113,5 +113,5 @@ output "azs" {
 }
 
 output "kubernetes_subnet" {
-  value = module.subnet.subnets.*.name
+  value = module.public-vpc.subnets_names[0]
 }
