@@ -113,5 +113,5 @@ output "azs" {
 }
 
 output "kubernetes_subnet" {
-  value = module.subnet.subnets
+  value = module.subnet.subnets[0].self_link
 }
