@@ -24,6 +24,8 @@ locals {
 
   public_subnets_names  = [for subnet_num in range(local.num_azs) : "${var.vpc_name}-public-${subnet_num}"]
   private_subnets_names = [for subnet_num in range(local.num_azs) : "${var.vpc_name}-private-${subnet_num}"]
+
+  all_subnets_ranges = flatten(["172.16.0.0/12", local.public_subnets_ranges, local.private_subnets_ranges])
 }
 
 data "google_compute_zones" "available" {
@@ -41,27 +43,31 @@ module "public-vpc" {
 
   subnets = concat([
     {
-      subnet_name   = "eks"
-      subnet_ip     = "172.16.0.0/14"
-      subnet_region = var.region
+      subnet_name           = "eks"
+      subnet_ip             = "172.16.0.0/14"
+      subnet_region         = var.region
+      subnet_private_access = true
     },
     ],
     [for subnet in range(length(local.public_subnets_names)) :
       {
-        subnet_name   = local.public_subnets_names[subnet]
-        subnet_ip     = local.public_subnets_ranges[subnet]
-        subnet_region = var.region
+        subnet_name           = local.public_subnets_names[subnet]
+        subnet_ip             = local.public_subnets_ranges[subnet]
+        subnet_region         = var.region
+        subnet_private_access = true
   }])
 
   secondary_ranges = {
     eks = [
       {
-        range_name    = "eks-pods"
-        ip_cidr_range = "172.20.0.0/14"
+        range_name            = "eks-pods"
+        ip_cidr_range         = "172.20.0.0/14"
+        subnet_private_access = true
       },
       {
-        range_name    = "eks-svcs"
-        ip_cidr_range = "172.24.0.0/14"
+        range_name            = "eks-svcs"
+        ip_cidr_range         = "172.24.0.0/14"
+        subnet_private_access = true
       },
     ]
   }

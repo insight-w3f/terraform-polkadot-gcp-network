@@ -5,6 +5,12 @@ resource "google_service_account" "sentry_node_sg" {
   count = true ? 1 : 0
 }
 
+resource "google_project_iam_binding" "sentry" {
+  count   = true ? 1 : 0
+  members = ["serviceAccount:${google_service_account.sentry_node_sg[0].email}"]
+  role    = "roles/compute.viewer"
+}
+
 resource "google_compute_firewall" "sentry_node_sg_ssh" {
   name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-ssh"
   network                 = module.public-vpc.network_name
@@ -38,18 +44,18 @@ resource "google_compute_firewall" "sentry_node_sg_bastion_ssh" {
 }
 
 resource "google_compute_firewall" "sentry_node_sg_mon" {
-  name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-monitoring"
-  network                 = module.private-vpc.network_name
-  count                   = var.monitoring_enabled ? 1 : 0
-  description             = "${var.logging_sg_name} node exporter"
-  direction               = "INGRESS"
-  source_service_accounts = google_service_account.monitoring_sg[*].email
-  target_service_accounts = google_service_account.sentry_node_sg[*].email
+  name          = "${var.vpc_name}-${var.sentry_node_sg_name}-monitoring"
+  network       = module.public-vpc.network_name
+  count         = var.monitoring_enabled ? 1 : 0
+  description   = "${var.logging_sg_name} node exporter"
+  direction     = "INGRESS"
+  source_ranges = local.all_subnets_ranges
 
   allow {
     ports = [
       "9100",
-    "9323"]
+      "9323",
+    "9610"]
     protocol = "tcp"
   }
 }
@@ -72,18 +78,18 @@ resource "google_compute_firewall" "sentry_node_sg_hids" {
 }
 
 resource "google_compute_firewall" "sentry_node_sg_consul" {
-  name                    = "${var.vpc_name}-${var.sentry_node_sg_name}-consul"
-  network                 = module.private-vpc.network_name
-  description             = "${var.sentry_node_sg_name} Consul ports"
-  count                   = var.consul_enabled ? 1 : 0
-  direction               = "INGRESS"
-  source_service_accounts = google_service_account.consul_sg[*].email
-  target_service_accounts = google_service_account.sentry_node_sg[*].email
+  name          = "${var.vpc_name}-${var.sentry_node_sg_name}-consul"
+  network       = module.public-vpc.network_name
+  description   = "${var.sentry_node_sg_name} Consul ports"
+  count         = var.consul_enabled ? 1 : 0
+  direction     = "INGRESS"
+  source_ranges = local.all_subnets_ranges
 
   allow {
     ports = [
       "8600",
       "8500",
+      "8300",
       "8301",
     "8302"]
     protocol = "tcp"
@@ -92,6 +98,7 @@ resource "google_compute_firewall" "sentry_node_sg_consul" {
   allow {
     ports = [
       "8600",
+      "8300",
       "8301",
     "8302"]
     protocol = "udp"
