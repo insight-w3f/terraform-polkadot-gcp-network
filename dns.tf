@@ -1,6 +1,7 @@
 locals {
   vpc_ids       = [module.public-vpc.network_self_link, module.private-vpc.network_self_link]
-  public_domain = join(".", [data.google_client_config.current.region, "gcp.polkadot", var.root_domain_name])
+  public_root   = join(".", ["gcp", var.network_name, var.root_domain_name])
+  public_domain = join(".", [data.google_client_config.current.region, local.public_root])
 }
 
 data cloudflare_zones "this" {
@@ -11,7 +12,7 @@ data cloudflare_zones "this" {
 
 resource "cloudflare_record" "public_delegation" {
   count   = var.root_domain_name == "" ? 0 : 4
-  name    = "gcp.polkadot.${var.root_domain_name}."
+  name    = "${local.public_root}."
   value   = google_dns_managed_zone.this[0].name_servers[count.index]
   type    = "NS"
   zone_id = data.cloudflare_zones.this.zones[0].id
@@ -19,14 +20,14 @@ resource "cloudflare_record" "public_delegation" {
 
 resource "google_dns_managed_zone" "this" {
   count    = var.root_domain_name == "" ? 0 : 1
-  name     = "gcp-${var.environment}"
-  dns_name = "gcp.${var.network_name}.${var.root_domain_name}."
+  name     = "${var.vpc_name}-public-root"
+  dns_name = "${local.public_root}."
 }
 
 resource "google_dns_managed_zone" "root_private" {
   count    = var.create_internal_domain ? 1 : 0
   dns_name = "${var.namespace}.${var.internal_tld}."
-  name     = "root_private"
+  name     = "${var.vpc_name}-private-root"
 
   visibility = "private"
 
@@ -43,7 +44,7 @@ resource "google_dns_managed_zone" "root_private" {
 resource "google_dns_managed_zone" "region_public" {
   count    = var.create_public_regional_subdomain ? 1 : 0
   dns_name = "${local.public_domain}."
-  name     = "region-public"
+  name     = "${var.vpc_name}-public-${data.google_client_config.current.region}"
 }
 
 resource "google_dns_record_set" "region_public" {
