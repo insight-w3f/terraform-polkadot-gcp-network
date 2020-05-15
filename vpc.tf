@@ -25,6 +25,8 @@ locals {
   public_subnets_names  = [for subnet_num in range(local.num_azs) : "${var.vpc_name}-public-${subnet_num}"]
   private_subnets_names = [for subnet_num in range(local.num_azs) : "${var.vpc_name}-private-${subnet_num}"]
 
+  kubernetes_subnet_name = "${var.vpc_name}-eks"
+
   all_subnets_ranges = flatten(["172.16.0.0/12", local.public_subnets_ranges, local.private_subnets_ranges])
 }
 
@@ -43,7 +45,7 @@ module "public-vpc" {
 
   subnets = concat([
     {
-      subnet_name           = "eks"
+      subnet_name           = local.kubernetes_subnet_name
       subnet_ip             = "172.16.0.0/14"
       subnet_region         = var.region
       subnet_private_access = true
@@ -60,12 +62,12 @@ module "public-vpc" {
   secondary_ranges = {
     eks = [
       {
-        range_name            = "eks-pods"
+        range_name            = "${local.kubernetes_subnet_name}-pods"
         ip_cidr_range         = "172.20.0.0/14"
         subnet_private_access = true
       },
       {
-        range_name            = "eks-svcs"
+        range_name            = "${local.kubernetes_subnet_name}-svcs"
         ip_cidr_range         = "172.24.0.0/14"
         subnet_private_access = true
       },
