@@ -60,7 +60,7 @@ module "public-vpc" {
   }])
 
   secondary_ranges = {
-    eks = [
+    (local.kubernetes_subnet_name) = [
       {
         range_name            = "${local.kubernetes_subnet_name}-pods"
         ip_cidr_range         = "172.20.0.0/14"
