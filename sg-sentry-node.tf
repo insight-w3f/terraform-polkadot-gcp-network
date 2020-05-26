@@ -140,7 +140,7 @@ resource "google_compute_firewall" "sentry_node_sg_api" {
 
   allow {
     ports = [
-    "5500", "9933"]
+    "5500", "9933", "9944"]
     protocol = "tcp"
   }
 }
