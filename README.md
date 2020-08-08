@@ -27,12 +27,6 @@ module "this" {
 No issue is creating limit on this module.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 0.12 |
-
 ## Providers
 
 | Name | Version |
@@ -43,7 +37,7 @@ No issue is creating limit on this module.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+|------|-------------|------|---------|:-----:|
 | azs | List of availability zones | `list(string)` | `[]` | no |
 | bastion\_enabled | Boolean to enable a bastion host.  All ssh traffic restricted to bastion | `bool` | `false` | no |
 | bastion\_sg\_name | Name for the bastion security group | `string` | `"bastion-sg"` | no |
@@ -53,7 +47,6 @@ No issue is creating limit on this module.
 | corporate\_ip | The corporate IP you want to restrict ssh traffic to | `string` | `""` | no |
 | create\_internal\_domain | Boolean to create an internal split horizon DNS | `bool` | `false` | no |
 | create\_public\_regional\_subdomain | Boolean to create regional subdomain - ie us-east-1.example.com | `bool` | `false` | no |
-| environment | The environment | `string` | `""` | no |
 | hids\_enabled | Boolean to enable intrusion detection systems traffic | `bool` | `false` | no |
 | hids\_sg\_name | Name for the HIDS security group | `string` | `"hids-sg"` | no |
 | internal\_tld | The top level domain for the internal DNS | `string` | `"internal"` | no |
@@ -64,12 +57,10 @@ No issue is creating limit on this module.
 | namespace | The namespace to deploy into | `string` | `""` | no |
 | network\_name | The network name, ie kusama / mainnet | `string` | `""` | no |
 | num\_azs | The number of AZs to deploy into | `number` | `0` | no |
-| owner | n/a | `string` | `""` | no |
 | project | The GCP project name | `string` | n/a | yes |
 | region | The GCP region | `string` | n/a | yes |
 | root\_domain\_name | The public domain | `string` | `""` | no |
 | sentry\_node\_sg\_name | Name for the public node security group | `string` | `"sentry-sg"` | no |
-| stage | The stage of the deployment | `string` | `""` | no |
 | vault\_enabled | Boolean to allow vault related traffic | `bool` | `false` | no |
 | vault\_sg\_name | Name for the vault security group | `string` | `"vault-sg"` | no |
 | vpc\_name | The name of the VPC | `string` | `"polkadot"` | no |
