@@ -1,0 +1,72 @@
+---
+
+print_:
+  type: print
+  statement: Configuring Polkadot AWS Network
+
+available_regions_:
+  type: gcp_regions
+  region: "{{ nuki.gcp_region }}"
+
+gcp_region:
+  type: select
+  message: Which region would you like to deploy into?
+  choices: "{{ nuki.available_regions_ }}"
+
+available_azs_:
+  type: gcp_azs
+  region: "{{ nuki.gcp_region }}"
+  gcp_project: "{{ nuki.project }}"
+
+azs:
+  type: checkbox
+  message: "What availability zones do you want to deploy in {{ nuki.region }}?"
+  choices: "{{ nuki.available_azs_ }}"
+
+dns_type_:
+  type: select
+  message: How do you want to setup DNS?
+  choices:
+    - no_dns: No dns
+    - single_dns: Single region single domain
+    - cloudflare_dns: Cloudflare based multi-region georouted
+
+cloudflare_enable:
+  type: stat
+  input: true
+  when: "{{ nuki.dns_type_ == 'cloudflare_dns'  }}"
+
+root_domain_name:
+  type: input
+  when: "{{ nuki.dns_type_ in ['single_dns', 'cloudflare_dns'] }}"
+  message: What is your root domain - ie examle.com?
+
+create_public_regional_subdomain:
+  type: stat
+  when: "{{ nuki.dns_type_ == 'single_dns'  }}"
+
+#subdomain:
+#  type: input
+#  when: "{{ nuki.dns_type_ in ['single_dns', 'cloudflare_dns'] }}"
+#  message: |
+#    What subdomain? Example: <your subdomain>.example.com{% if nuki.dns_type_ == 'single_dns' %}
+#      - Leave blank for root dns records > {% elif nuki.dns_type_ == 'cloudflare_dns' %}
+#      - If georouted and left blank, will fallback on `namespace` variable
+#        which defaults to polkadot per the convention:
+#        <region>.aws.<mainnet/kusama>.<namespace>.example.com
+#        If supplied will go to <subdomain>.example.com but needs additional
+#        consideration for zoning > {% endif %}
+
+vars_confirm_:
+  type: confirm
+  message: Do you want to configure other variables?
+
+sg_vars:
+  type: terraform_variables
+  when: "{{ nuki.vars_confirm_ }}"
+  variables_file: variables.tf
+  merge: true
+  var_list:
+    - internal_tld
+    - cidr
+    - corporate_ip
