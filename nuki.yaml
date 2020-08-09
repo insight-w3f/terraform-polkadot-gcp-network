@@ -4,25 +4,6 @@ print_:
   type: print
   statement: Configuring Polkadot AWS Network
 
-available_regions_:
-  type: gcp_regions
-  region: "{{ nuki.gcp_region }}"
-
-gcp_region:
-  type: select
-  message: Which region would you like to deploy into?
-  choices: "{{ nuki.available_regions_ }}"
-
-available_azs_:
-  type: gcp_azs
-  region: "{{ nuki.gcp_region }}"
-  gcp_project: "{{ nuki.project }}"
-
-azs:
-  type: checkbox
-  message: "What availability zones do you want to deploy in {{ nuki.region }}?"
-  choices: "{{ nuki.available_azs_ }}"
-
 dns_type_:
   type: select
   message: How do you want to setup DNS?
