@@ -13,25 +13,25 @@ dns_type_:
     - cloudflare_dns: Cloudflare based multi-region georouted
 
 cloudflare_enable:
-  type: stat
+  type: var
   input: true
-  when: "{{ nuki.dns_type_ == 'cloudflare_dns'  }}"
+  when: "{{ dns_type_ == 'cloudflare_dns'  }}"
 
 root_domain_name:
   type: input
-  when: "{{ nuki.dns_type_ in ['single_dns', 'cloudflare_dns'] }}"
+  when: "{{ dns_type_ in ['single_dns', 'cloudflare_dns'] }}"
   message: What is your root domain - ie examle.com?
 
 create_public_regional_subdomain:
-  type: stat
-  when: "{{ nuki.dns_type_ == 'single_dns'  }}"
+  type: var
+  when: "{{ dns_type_ == 'single_dns'  }}"
 
 #subdomain:
 #  type: input
-#  when: "{{ nuki.dns_type_ in ['single_dns', 'cloudflare_dns'] }}"
+#  when: "{{ dns_type_ in ['single_dns', 'cloudflare_dns'] }}"
 #  message: |
-#    What subdomain? Example: <your subdomain>.example.com{% if nuki.dns_type_ == 'single_dns' %}
-#      - Leave blank for root dns records > {% elif nuki.dns_type_ == 'cloudflare_dns' %}
+#    What subdomain? Example: <your subdomain>.example.com{% if dns_type_ == 'single_dns' %}
+#      - Leave blank for root dns records > {% elif dns_type_ == 'cloudflare_dns' %}
 #      - If georouted and left blank, will fallback on `namespace` variable
 #        which defaults to polkadot per the convention:
 #        <region>.aws.<mainnet/kusama>.<namespace>.example.com
@@ -44,7 +44,7 @@ vars_confirm_:
 
 sg_vars:
   type: terraform_variables
-  when: "{{ nuki.vars_confirm_ }}"
+  when: "{{ vars_confirm_ }}"
   variables_file: variables.tf
   merge: true
   var_list:
